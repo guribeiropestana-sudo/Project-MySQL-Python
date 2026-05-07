@@ -19,6 +19,15 @@ CREATE TABLE IF NOT EXISTS tbl_usuarios (
 
 print('Sistema iniciado com sucesso! ')
 
+def menu():
+        print("""OPÇÕES:
+1 - Cadastradar usuario
+2 - Listar usuarios
+3 - Deletar usuario
+4 - Encerrar programa """)
+        return
+
+
 def cadastrar():
     nome = input('Digite o nome: ')
 
@@ -56,11 +65,11 @@ Email: {linha[4]}
 def deletarUsuario():
     try:
         id_usuario = int(input('Digite o id para deletar: '))
-    except:
+    except ValueError:
         print('Id inválido')
         return
 
-    cursor.execute('DELETE FROM tbl_usuarios WHERE id = %s', (usuario))
+    cursor.execute('SELECT * FROM tbl_usuarios WHERE id = %s', (id_usuario,))
     usuario = cursor.fetchone()
 
     if usuario is None:
@@ -76,10 +85,10 @@ Telefone: {usuario[3]}
 Email: {usuario[4]}
 ''')
     
-    confirmar = input('Deseja deletar esse usuario? S/N').strip()[0]
+    confirmar = input('Deseja deletar esse usuario? S/N').strip().lower()
 
-    if confirmar.lower == 's':
-        cursor.execute('DELETE FROM tbl_usuarios WHERE id = %s', (id_usuario))
+    if confirmar == 's':
+        cursor.execute('DELETE FROM tbl_usuarios WHERE id = %s', (id_usuario,))
         conexao.commit()
 
         print('Usuario deletado com sucesso!')
@@ -87,12 +96,7 @@ Email: {usuario[4]}
         print('Operação cancelada.')
 
 while True:
-    print("""OPÇÕES:
-1 - Cadastradar usuario
-2 - Listar usuarios
-3 - Deletar usuario
-4 - Encerrar programa """)
-    
+    menu()
     opcao = input('Digite a sua opcão: ')
 
     if opcao == '1':
