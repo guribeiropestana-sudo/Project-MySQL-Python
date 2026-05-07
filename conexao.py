@@ -23,8 +23,9 @@ def menu():
         print("""OPÇÕES:
 1 - Cadastradar usuario
 2 - Listar usuarios
-3 - Deletar usuario
-4 - Encerrar programa """)
+3 - Atualizar usuario
+4 - Deletar usuario
+5 - Encerrar programa """)
         return
 
 
@@ -61,6 +62,64 @@ Idade: {linha[2]}
 Telefone: {linha[3]}
 Email: {linha[4]}
 ----------------------''')
+def atualizarUsuario():
+    try:
+        id_usuario = int(input('Digite o id do usuario que deseja atualizar: '))
+    except ValueError:
+        print('Id inválido')
+        return
+    
+    cursor.execute('SELECT * FROM tbl_usuarios WHERE id = %s',(id_usuario,))
+    usuario = cursor.fetchone()
+
+    if usuario == None:
+        print('Usuario não encontrado...')
+        return
+    
+    print(f'''
+Usuario encontrado:
+
+Nome: {usuario[1]}
+Idade: {usuario[2]}
+Telefone: {usuario[3]}
+Email: {usuario[4]}
+''')
+    while True:
+        confirmar = input('Deseja alterar o dados desse usuario: S/N').strip().lower()
+
+        if confirmar == 's':
+            break
+        elif confirmar == 'n':
+            print('Operação cancelada.')
+            return
+        else:
+            print('Digite a apenas S/N')
+
+    novo_nome = input('Digite o novo nome para o usuario: ')
+
+    try:
+        nova_idade = int(input('Digite a nova idade para o usuario: '))
+    except ValueError:
+        print('Idade inválida')
+        return
+    
+    novo_telefone = input('Digite o novo telefone para o usuario: ')
+    novo_email = input('Digite o novo e-mail para o usuario: ')
+
+    sql =""" UPDATE tbl_usuarios 
+    SET nome_usuario = %s,
+    idade_usuario = %s,
+    telefone_usuario = %s,
+    email_usuario = %s WHERE id = %s """
+    
+    valores = (novo_nome, nova_idade, novo_telefone, novo_email, id_usuario)
+    
+    cursor.execute(sql,valores)
+    conexao.commit()
+    
+    print('Usuario atualizado com sucesso!')
+    return
+
 
 def deletarUsuario():
     try:
@@ -101,11 +160,13 @@ while True:
 
     if opcao == '1':
         cadastrar()
-    if opcao == '2':
+    elif opcao == '2':
         listar()
-    if opcao == '3':
+    elif opcao == '3':
+        atualizarUsuario()
+    elif opcao == '4':
         deletarUsuario()
-    if opcao == '4':
+    elif opcao == '5':
         print('Obrigado pela escolha! Volte sempre 🤩')
         break
 
