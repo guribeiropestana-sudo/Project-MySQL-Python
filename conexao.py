@@ -25,7 +25,8 @@ def menu():
 2 - Listar usuarios
 3 - Atualizar usuario
 4 - Deletar usuario
-5 - Encerrar programa """)
+5 - Buscar usuario
+6 - Encerrar programa """)
         return
 
 
@@ -62,6 +63,7 @@ Idade: {linha[2]}
 Telefone: {linha[3]}
 Email: {linha[4]}
 ----------------------''')
+        
 def atualizarUsuario():
     try:
         id_usuario = int(input('Digite o id do usuario que deseja atualizar: '))
@@ -154,6 +156,30 @@ Email: {usuario[4]}
     else:
         print('Operação cancelada.')
 
+def buscarUsuario():
+    nome = input('Digite o nome que deseja buscar: ')
+
+    sql = '''
+    SELECT * FROM tbl_usuarios WHERE nome_usuario LIKE %s'''
+    
+    valor = (f'%{nome}%',)
+    cursor.execute(sql,valor)
+
+    usuarios = cursor.fetchall()
+
+    if not usuarios:
+        print('Usuario não encontrado')
+
+    for usuario in usuarios:
+        print(f'''
+ID: {usuario[0]}
+Nome: {usuario[1]}
+Idade: {usuario[2]}
+Telefone: {usuario[3]}
+Email: {usuario[4]}
+''')
+    return
+
 while True:
     menu()
     opcao = input('Digite a sua opcão: ')
@@ -167,6 +193,8 @@ while True:
     elif opcao == '4':
         deletarUsuario()
     elif opcao == '5':
+        buscarUsuario()
+    elif opcao == '6':
         print('Obrigado pela escolha! Volte sempre 🤩')
         break
 
